@@ -1,101 +1,112 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import { MeanComponent } from "./MeanComponent";
-import { MedianComponent } from "./MedianComponent";
-import { ModeComponent } from "./ModeComponent";
-import { StandardDiviationComponent } from "./StandardDiviationComponent";
-import { Typography } from "@material-ui/core";
-import { valueSetOne } from "../services/mockApiServices";
-
-interface IAppContainerProps {
-
-}
+import { Typography, Switch } from "@material-ui/core";
+import { ChartComponent } from "./ChartComponent";
+import stats from "stats-lite";
+import { TableComponent } from "./TableComponent";
+import { MockApiServices } from "../services/MockApiServices";
 
 export interface Data {
-    name: string,
+    name: number,
     count: number
 }
 
-export function AppContainer(props: IAppContainerProps) {
-    const data = [
-        {
-            name: "1",
-            pv: 200
-        },
-        {
-            name: "2",
-            pv: 300
-        },
-        {
-            name: "3",
-            pv: 2400
-        },
-    ]
+function parseData(dataToParse: number[]): Data[] {
+    let parsedData: Data[] = [] as Data[];
+    dataToParse.forEach((x: number) => {
+        let index = parsedData.findIndex(dataPoint => dataPoint.name === x);
+        if (index !== -1) {
+            parsedData[index].count += 1;
+        }
+        else {
+            parsedData.push(
+                {
+                    name: x,
+                    count: 1
+                }
+            )
+        }
+    });
+    return (parsedData);
+}
 
-    const dataSet: Data[] = [] as Data[];
+export function AppContainer() {
+    const [dataSetOne, setDataSetOne] = useState([] as Data[]);
+    const [dataSetOneMode, setDataSetOneMode] = useState(0);
+    const [dataSetOneMean, setDataSetOneMean] = useState(0);
+    const [dataSetOneMedian, setDataSetOneMedian] = useState(0);
+    const [dataSetOneDeviation, setDataSetOneDeviation] = useState(0);
 
-    const setDataSet = () => {
-        valueSetOne.forEach((x: number) => {
-            let index = dataSet.findIndex(dataPoint => dataPoint.name as any as number === x);
-            if (index) {
-                dataSet[index].count += 1;
-            }
-            else {
-                dataSet.push(
-                    {
-                        name: x as any as string,
-                        count: 1
-                    }
-                )
-            }
-            //const isLargeNumber = (element) => element > 13;
-        });
-    }
+    const [dataSetTwo, setDataSetTwo] = useState([] as Data[]);
+    const [dataSetTwoMode, setDataSetTwoMode] = useState(0);
+    const [dataSetTwoMean, setDataSetTwoMean] = useState(0);
+    const [dataSetTwoMedian, setDataSetTwoMedian] = useState(0);
+    const [dataSetTwoDeviation, setDataSetTwoDeviation] = useState(0);
+
+    const [toggleData, onToggleData] = useState(false);
+
+    useEffect(() => {
+        Promise.all([MockApiServices.getValueSetOne(), MockApiServices.getValueSetTwo()])
+            .then((results) => {
+                let sortedReturn1 = results[0].sort(function (a, b) { return a - b });
+                let dataSet1: Data[] = parseData(sortedReturn1);
+
+                let sortedReturn2 = results[1].sort(function (a, b) { return a - b });
+                let dataSet2: Data[] = parseData(sortedReturn2);
+
+                setDataSetOne(dataSet1);
+                setDataSetOneMode(Math.round(1000 * stats.mode(sortedReturn1)) / 1000);
+                setDataSetOneMean(Math.round(1000 * stats.mean(sortedReturn1)) / 1000);
+                setDataSetOneDeviation(Math.round(1000 * stats.stdev(sortedReturn1)) / 1000);
+                setDataSetOneMedian(Math.round(1000 * stats.median(sortedReturn1)) / 1000);
+
+                setDataSetTwo(dataSet2);
+                setDataSetTwoMode(Math.round(1000 * stats.mode(sortedReturn2)) / 1000);
+                setDataSetTwoMean(Math.round(1000 * stats.mean(sortedReturn2)) / 1000);
+                setDataSetTwoDeviation(Math.round(1000 * stats.stdev(sortedReturn2)) / 1000);
+                setDataSetTwoMedian(Math.round(1000 * stats.median(sortedReturn2)) / 1000);
+            });
+    }, [])
+
+
 
     return (
         <div>
-            <Grid container spacing={3} style={{ paddingTop: "2rem" }}>
+            <Grid container spacing={3} alignItems="center" style={{ paddingTop: "2rem" }}>
                 <Grid item xs={12}>
                     <Typography align="center" variant="h3" component="h2">
                         Tandem Challenge!
                     </Typography>
                 </Grid>
-                <Grid item xs={3}>
-                    <Paper>Hello</Paper>
-                </Grid>
-                <Grid item xs={3}>
-                    <Paper>
-                        <MeanComponent />
+                <Grid item xs={3} />
+                <Grid item xs={6}>
+                    <Paper style={{ paddingTop: "1rem" }}>
+                        <ChartComponent dataSet={toggleData ? (dataSetOne) : (dataSetTwo)} />
                     </Paper>
                 </Grid>
-                <Grid item xs={3}>
-                    <Paper>
-                        <MedianComponent />
-                    </Paper>
-                </Grid>
-                <Grid item xs={3}>
-                    <Paper>Hello</Paper>
-                </Grid>
-            </Grid>
+                <Grid item xs={3} />
 
-            <Grid container spacing={3} style={{ paddingTop: "5rem" }}>
-                <Grid item xs={3}>
-                    <Paper>Hello</Paper>
+                <Grid item xs={3} />
+                <Grid container item xs={2}>
+                    <Grid component="label" container alignItems="center" spacing={1}>
+                        <Grid item>Data1</Grid>
+                        <Grid item>
+                            <Switch checked={toggleData} onChange={() => onToggleData(!toggleData)} />
+                        </Grid>
+                        <Grid item>Data2</Grid>
+                    </Grid>
                 </Grid>
-                <Grid item xs={3}>
-                    <Paper>
-                        <ModeComponent dataSet={dataSet} />
-                    </Paper>
+
+                <Grid item xs={4}>
+                    <TableComponent
+                        mean={toggleData ? (dataSetOneMean) : (dataSetTwoMean)}
+                        mode={toggleData ? (dataSetOneMode) : (dataSetTwoMode)}
+                        standardDev={toggleData ? (dataSetOneDeviation) : (dataSetTwoDeviation)}
+                        median={toggleData ? (dataSetOneMedian) : (dataSetTwoDeviation)}
+                    />
                 </Grid>
-                <Grid item xs={3}>
-                    <Paper>
-                        <StandardDiviationComponent />
-                    </Paper>
-                </Grid>
-                <Grid item xs={3}>
-                    <Paper>Hello</Paper>
-                </Grid>
+                <Grid item xs={3} />
             </Grid>
         </div>
     );
