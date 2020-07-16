@@ -28,10 +28,10 @@ export function TableComponent(props: ITableProps) {
                 </TableHead>
                 <TableBody>
                     <TableRow>
-                        <TableCell>{props.mean}</TableCell>
-                        <TableCell>{props.median}</TableCell>
-                        <TableCell>{props.standardDev}</TableCell>
-                        <TableCell>{props.mode}</TableCell>
+                        <TableCell id="mean-value-cell">{props.mean}</TableCell>
+                        <TableCell id="median-value-cell">{props.median}</TableCell>
+                        <TableCell id="standard-deviation-value-cell">{props.standardDev}</TableCell>
+                        <TableCell id="mode-value-cell">{props.mode}</TableCell>
                     </TableRow>
                 </TableBody>
             </Table>
