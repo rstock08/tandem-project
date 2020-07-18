@@ -1,10 +1,6 @@
 import React from "react";
-import Enzyme, { shallow } from "enzyme";
-import Adapter from "enzyme-adapter-react-16";
+import { shallow } from "enzyme";
 import { TableComponent } from "../../components/TableComponent";
-import { TableBody, TableCell } from "@material-ui/core";
-
-Enzyme.configure({ adapter: new Adapter() });
 
 let mean: number = 0;
 let mode: number = 0;
@@ -12,15 +8,31 @@ let median: number = 0;
 let standardDev: number = 0;
 
 beforeEach(() => {
-    mean = 0;
-    mode = 0;
-    median = 0;
-    standardDev = 0;
+    mean = 11;
+    mode = 12;
+    median = 13;
+    standardDev = 14;
 });
 
 describe("TableComponent Test Suite", () => {
     it("Smoke test", () => {
         const wrapper = shallow(<TableComponent mean={mean} mode={mode} median={median} standardDev={standardDev} />);
         expect(wrapper).toBeTruthy();
+    });
+    it("Test mean value is set", () => {
+        const wrapper = shallow(<TableComponent mean={mean} mode={mode} median={median} standardDev={standardDev} />);
+        expect(wrapper.find("#mean-value-cell").text()).toEqual("11");
+    });
+    it("Test mode value is set", () => {
+        const wrapper = shallow(<TableComponent mean={mean} mode={mode} median={median} standardDev={standardDev} />);
+        expect(wrapper.find("#mode-value-cell").text()).toEqual("12");
+    });
+    it("Test median value is set", () => {
+        const wrapper = shallow(<TableComponent mean={mean} mode={mode} median={median} standardDev={standardDev} />);
+        expect(wrapper.find("#median-value-cell").text()).toEqual("13");
+    });
+    it("Test standard deviation value is set", () => {
+        const wrapper = shallow(<TableComponent mean={mean} mode={mode} median={median} standardDev={standardDev} />);
+        expect(wrapper.find("#standard-deviation-value-cell").text()).toEqual("14");
     });
 })

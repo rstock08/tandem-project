@@ -1,6 +1,7 @@
 import React from "react";
 import Enzyme, { shallow, mount } from "enzyme";
 import { AppContainer } from "../../components/AppContainer";
+import { act } from "@testing-library/react";
 
 let wrapper: Enzyme.ShallowWrapper<any, Readonly<{}>, React.Component<{}, {}, any>>;
 
@@ -8,6 +9,7 @@ beforeEach(() => {
     if (wrapper) {
         wrapper.unmount();
     }
+    jest.clearAllMocks();
 })
 
 describe("AppContainer Test Suite", () => {
@@ -16,20 +18,16 @@ describe("AppContainer Test Suite", () => {
         expect(wrapper).toBeTruthy();
     });
     it("Tests add button", () => {
-        //const spy = jest.spyOn(AppContainer.prototype, "onChangeNumber");
         wrapper = shallow(<AppContainer />);
-        // mountWrapper.find("#add-button").simulate("click", { setAddedNumbers: mockSetAddedNumbers, addedNumbers: mockAddedNumbers, setNumberToAdd: mockSetNumberToAdd, numberToAdd: mockNumberToAdd });
-        const addButton = wrapper.find("#add-textfield").simulate("change", { target: { value: "20" } });
-        //expect(spy).toHaveBeenCalled();
-        jest.setTimeout(1000);
-        expect(addButton.prop("value")).toEqual("20");
-        //expect(setNumberToAdd).toHaveBeenCalled();
-    })
-
-    // it("Tests changing number to add input", () => {
-    //     let mountWrapper = mount(<AppContainer />);
-    //     let textfieldWrapper = mountWrapper.find("#add-textfield");
-    //     textfieldWrapper.simulate("change", { target: { value: "20" } });
-    //     expect(textfieldWrapper.instance).toHaveValue("20");
-    // })
+        wrapper.find("#add-textfield").simulate("change", { target: { value: "20" } });
+        wrapper.update();
+        expect(wrapper.find("#add-textfield").prop("value")).toEqual("20");
+    });
+    it("Tests toggle button", async () => {
+        wrapper = shallow(<AppContainer />);
+        expect(wrapper.find("#toggle-button").prop("checked")).toEqual(false);
+        wrapper.find("#toggle-button").simulate("change");
+        wrapper.update();
+        expect(wrapper.find("#toggle-button").prop("checked")).toEqual(true);
+    });
 })

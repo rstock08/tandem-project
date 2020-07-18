@@ -142,14 +142,14 @@ export function AppContainer(props: IProps) {
                     <Grid component="label" container alignItems="center">
                         <Grid item>Data1</Grid>
                         <Grid item>
-                            <Switch checked={toggleData} onChange={() => onToggleData(!toggleData)} />
+                            <Switch id="toggle-button" checked={toggleData} onChange={() => onToggleData(!toggleData)} />
                         </Grid>
                         <Grid item>Data2</Grid>
                     </Grid>
                 </Grid>
                 <Grid item xs={3} style={{ paddingTop: "1rem", marginLeft: "-6rem" }} >
                     <Button onClick={() => onReset()}>
-                        <IconButton color="primary">
+                        <IconButton disableRipple={false} color="primary">
                             <RefreshIcon />
                         </IconButton>
                     </Button>
