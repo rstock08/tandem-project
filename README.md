@@ -1,4 +1,4 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+4 Hour Challenge to create an application that takes in mocked API data and generates mode / mean / median / standard deviation for two sets of data. User can add in their own numbers and the statistics should change with. Refer to Tandem ReactJS Challenge.pdf in the resources folder for provided challenge document. Also wrote basic test coverage using Jest / Enzyme.
 
 ## Available Scripts
 
