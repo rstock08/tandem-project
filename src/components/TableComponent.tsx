@@ -21,7 +21,7 @@ export function TableComponent(props: ITableProps) {
                 <TableHead>
                     <TableRow>
                         <TableCell>Mean</TableCell>
-                        <TableCell>Mode</TableCell>
+                        <TableCell>Median</TableCell>
                         <TableCell>Standard Deviation</TableCell>
                         <TableCell>Mode</TableCell>
                     </TableRow>
